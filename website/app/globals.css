@@ -1,0 +1,163 @@
+:root {
+  --bg: #F6F1E8;
+  --surface: #FFFDF8;
+  --line: rgba(36, 29, 22, 0.10);
+  /* 50% reaches 3:1 against the warm canvas for input/button boundaries (WCAG 1.4.11). */
+  --line-2: rgba(36, 29, 22, 0.50);
+  --text: #241D16;
+  --muted: #6F655A;
+  /* Small metadata still needs normal-text AA contrast; hierarchy comes from size/weight, not invisibility. */
+  --faint: #6F655A;
+  --accent: #A8600A;
+  --accent-text: #9C5809;
+  --accent-ink: #FFFDF8;
+  --radius-media: 12px;
+  --radius-ctrl: 10px;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text); overflow-x: hidden; }
+body {
+  font-family: var(--font-body), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.5;
+}
+h1, h2, h3, p { margin: 0; }
+a { color: inherit; }
+::selection { background: var(--accent); color: var(--accent-ink); }
+
+/* ---- reels wall (the signature) ---- */
+@keyframes drift {
+  from { transform: translateY(0); }
+  to { transform: translateY(-50%); }
+}
+@keyframes driftX {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.wall { display: grid; gap: 14px; height: 100%; overflow: hidden; }
+.wall-col {
+  display: flex; flex-direction: column; gap: 14px;
+  animation: drift var(--dur) linear infinite;
+  will-change: transform;
+}
+.wall-col[data-reverse="true"] { animation-direction: reverse; }
+.wall:hover .wall-col { animation-play-state: paused; }
+
+/* ---- reel card ---- */
+.reel-card {
+  aspect-ratio: 9 / 16;
+  border-radius: var(--radius-media);
+  border: 1px solid var(--line);
+  position: relative; overflow: hidden;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+.reel-card:hover { transform: translateY(-4px); border-color: var(--line-2); }
+
+/* ---- buttons ---- */
+.btn {
+  font-family: var(--font-mono), monospace;
+  font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase;
+  padding: 13px 20px; border-radius: var(--radius-ctrl);
+  min-height: 44px;
+  text-decoration: none; display: inline-block;
+  transition: filter 0.15s ease, border-color 0.15s ease, transform 0.06s ease;
+}
+.btn:active { transform: translateY(1px); }
+.btn-primary { background: var(--accent); color: var(--accent-ink); font-weight: 600; border: 0; }
+.btn-primary:hover { filter: brightness(1.07); }
+.btn-ghost { background: transparent; color: var(--text); border: 1px solid var(--line-2); }
+.btn-ghost:hover { border-color: var(--accent); }
+
+/* ---- waitlist input ---- */
+.wl-input {
+  font-family: var(--font-body), sans-serif;
+  font-size: 15px;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--line-2);
+  border-radius: var(--radius-ctrl);
+  padding: 12px 16px;
+  min-width: 240px;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+.wl-input::placeholder { color: var(--faint); }
+.wl-input:focus { border-color: var(--accent); }
+
+/* ---- faq accordion ---- */
+details > summary { list-style: none; }
+details > summary::-webkit-details-marker { display: none; }
+details > summary:hover { color: var(--accent-text); }
+.faq-plus { transition: transform 0.2s ease; }
+details[open] .faq-plus { transform: rotate(45deg); }
+
+/* ---- hero demo ---- */
+.demo { width: 100%; max-width: 300px; }
+.demo-head {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 12px;
+  font-family: var(--font-mono), monospace; font-size: 11px; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--faint);
+}
+.demo-arrow { color: var(--accent-text); }
+.demo-clips { display: flex; gap: 8px; margin-bottom: 18px; }
+.demo-clip {
+  flex: 1; aspect-ratio: 9 / 16; border-radius: 8px; overflow: hidden;
+  border: 1px solid var(--line-2); background: var(--surface);
+}
+.demo-clip img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.demo-clips[data-working="true"] .demo-clip { animation: demoPulse 0.9s ease-in-out infinite; }
+.demo-clips[data-working="true"] .demo-clip:nth-child(2) { animation-delay: 0.12s; }
+.demo-clips[data-working="true"] .demo-clip:nth-child(3) { animation-delay: 0.24s; }
+.demo-clips[data-working="true"] .demo-clip:nth-child(4) { animation-delay: 0.36s; }
+@keyframes demoPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+.demo-working {
+  display: flex; align-items: center; gap: 9px; height: 46px;
+  font-family: var(--font-mono), monospace; font-size: 13px; color: var(--muted);
+}
+.demo-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); animation: demoBlink 0.7s infinite; }
+@keyframes demoBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
+.demo-out { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
+.demo-video {
+  width: 220px; max-width: 100%; aspect-ratio: 9 / 16; border-radius: 12px;
+  border: 1px solid var(--line-2); background: #000; display: block;
+}
+.demo-reset {
+  background: none; border: 0; padding: 0; cursor: pointer;
+  font-family: var(--font-mono), monospace; font-size: 12px; color: var(--faint);
+}
+.demo-reset:hover { color: var(--accent-text); }
+@media (prefers-reduced-motion: reduce) {
+  .demo-clips[data-working="true"] .demo-clip, .demo-dot { animation: none; }
+}
+
+/* ---- article / content pages ---- */
+.article { max-width: 680px; margin: 0 auto; padding: 0 28px; }
+.article h1 { font-family: var(--font-display), serif; font-weight: 400; font-size: clamp(34px, 5vw, 52px); line-height: 1.08; margin: 0 0 12px; color: var(--text); }
+.article .byline { font-family: var(--font-mono), monospace; font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--faint); margin: 0 0 40px; }
+.article .lede { font-size: 21px; color: var(--text); line-height: 1.55; margin: 0 0 8px; }
+.article h2 { font-family: var(--font-display), serif; font-weight: 400; font-size: clamp(24px, 3.4vw, 32px); line-height: 1.15; margin: 42px 0 12px; color: var(--text); }
+.article h3 { font-family: var(--font-body), sans-serif; font-weight: 500; font-size: 18px; margin: 28px 0 8px; color: var(--text); }
+.article p { font-size: 18px; line-height: 1.7; color: var(--muted); margin: 0 0 18px; }
+.article ul, .article ol { color: var(--muted); font-size: 18px; line-height: 1.7; padding-left: 22px; margin: 0 0 18px; }
+.article li { margin: 0 0 8px; }
+.article a { color: var(--text); text-decoration: underline; text-underline-offset: 3px; }
+.article strong { color: var(--text); font-weight: 500; }
+.article table { width: 100%; border-collapse: collapse; margin: 4px 0 22px; font-size: 16px; }
+.article th, .article td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); color: var(--muted); vertical-align: top; }
+.article th { color: var(--text); font-weight: 500; }
+
+/* ---- responsive ---- */
+@media (max-width: 860px) {
+  /* shrinkable single column so the reels row can't force the hero wider than the screen */
+  .hero-split { grid-template-columns: minmax(0, 1fr) !important; min-height: auto !important; }
+  /* reels scroll left-to-right on mobile: stacked rows, each drifting horizontally */
+  .wall-holder { height: auto !important; padding: 4px 0 0 !important; }
+  .wall { display: flex !important; flex-direction: column; align-items: flex-start; height: auto; }
+  .wall-col { flex-direction: row !important; animation-name: driftX !important; animation-duration: 18s !important; }
+  .wall-col .reel-card { flex: 0 0 auto; width: 30vw; max-width: 128px; }
+  .wall-col:nth-child(n+4) { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .wall-col { animation: none; }
+}

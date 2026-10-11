@@ -1,0 +1,56 @@
+{
+  "expo": {
+    "name": "Bokeh",
+    "slug": "bokeh-editor",
+    "scheme": "bokeh",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "backgroundColor": "#F7F7FB",
+    "icon": "./assets/icon.png",
+    "plugins": [
+      "expo-router",
+      "expo-font",
+      "expo-audio",
+      "expo-video",
+      "expo-secure-store",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 180,
+          "resizeMode": "contain",
+          "backgroundColor": "#F7F7FB"
+        }
+      ],
+      "expo-asset",
+      "expo-localization"
+    ],
+    "ios": {
+      "bundleIdentifier": "com.example.bokeheditor",
+      "buildNumber": "1",
+      "supportsTablet": false,
+      "infoPlist": {
+        "NSMicrophoneUsageDescription": "Record a voiceover for your reel.",
+        "NSPhotoLibraryUsageDescription": "Pick clips for your reel.",
+        "NSPhotoLibraryAddUsageDescription": "Save your finished reel to your camera roll.",
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "package": "com.example.bokeheditor",
+      "versionCode": 1,
+      "permissions": [
+        "RECORD_AUDIO",
+        "READ_MEDIA_VIDEO",
+        "READ_MEDIA_IMAGES",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.MODIFY_AUDIO_SETTINGS"
+      ]
+    },
+    "extra": {
+      "router": {}
+    },
+    "newArchEnabled": true
+  }
+}

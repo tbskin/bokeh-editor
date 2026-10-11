@@ -1,0 +1,20 @@
+# Keep the build context lean. NOTE: website/ source stays (pnpm workspace resolution needs its
+# package.json), but its build artifacts + all node_modules are excluded.
+**/node_modules
+**/.next
+**/data
+backend/*/data
+data
+# large / ephemeral media
+*.mp4
+*.mov
+*.wav
+*.m4a
+# secrets — never bake into the image (keys come from Railway env vars)
+.env
+.env.*
+# repo cruft
+.git
+*.log
+.DS_Store
+docs

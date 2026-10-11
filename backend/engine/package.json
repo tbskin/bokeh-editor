@@ -1,0 +1,27 @@
+{
+  "name": "@ole/engine",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "main": "./src/index.ts",
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.5",
+    "tsx": "^4.23.15",
+    "typescript": "^5.9.3",
+    "vitest": "4.1.11",
+    "vite": "8.3.4"
+  },
+  "dependencies": {
+    "gsap": "3.14.2",
+    "hyperframes": "0.7.61",
+    "posthog-node": "^5.55.1",
+    "zod": "^3.25.76"
+  }
+}

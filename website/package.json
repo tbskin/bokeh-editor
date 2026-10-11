@@ -1,0 +1,25 @@
+{
+  "name": "@ole/website",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@vercel/analytics": "^2.0.1",
+    "next": "15.5.27",
+    "react": "19.1.0",
+    "react-dom": "19.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.5",
+    "@types/react": "19.1.17",
+    "@types/react-dom": "19.1.9",
+    "typescript": "^5.9.3",
+    "vitest": "4.1.11",
+    "vite": "8.3.4"
+  }
+}

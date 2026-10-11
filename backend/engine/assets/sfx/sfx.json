@@ -1,0 +1,7 @@
+[
+  { "name": "typewriter", "file": "typewriter.mp3", "offsetDb": 1, "maxSec": 0.9, "description": "keystroke clatter for a wipe/typing title reveal (title-entrance only)" },
+  { "name": "whoosh", "file": "whoosh.mp3", "offsetDb": 0, "description": "fast air movement — cut into motion or a transition" },
+  { "name": "riser", "file": "riser.mp3", "offsetDb": -2, "maxSec": 1.3, "capFrom": "tail", "description": "building tension into a moment (the build's climax — capped from the tail)" },
+  { "name": "pop", "file": "pop.mp3", "offsetDb": -1, "description": "a quick punctuation — a pop-in or bounce" },
+  { "name": "click", "file": "click.mp3", "offsetDb": 1, "description": "a subtle tick — light punctuation on a quick cut" }
+]

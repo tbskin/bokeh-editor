@@ -1,0 +1,27 @@
+[
+  {
+    "mood": "upbeat",
+    "file": "upbeat.mp3",
+    "description": "bright, driving, energetic"
+  },
+  {
+    "mood": "chill",
+    "file": "chill.mp3",
+    "description": "calm, warm, laid-back"
+  },
+  {
+    "mood": "cinematic",
+    "file": "cinematic.mp3",
+    "description": "wide, emotional, building"
+  },
+  {
+    "mood": "hype",
+    "file": "hype.mp3",
+    "description": "hard, punchy, high-energy"
+  },
+  {
+    "mood": "cute",
+    "file": "cute.mp3",
+    "description": "light, playful ukulele \u2014 wholesome, cute moments"
+  }
+]

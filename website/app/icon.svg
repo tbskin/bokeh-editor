@@ -1,0 +1,7 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Bokeh">
+  <rect width="512" height="512" rx="116" fill="#FFFDF8"/>
+  <rect width="510" height="510" x="1" y="1" rx="115" fill="none" stroke="#241D16" stroke-opacity="0.12" stroke-width="2"/>
+  <rect x="136" y="148" width="240" height="48" rx="24" fill="#241D16"/>
+  <rect x="161" y="232" width="190" height="48" rx="24" fill="#241D16"/>
+  <rect x="181" y="316" width="150" height="48" rx="24" fill="#A8600A"/>
+</svg>

@@ -1,0 +1,36 @@
+nodeLinker: hoisted
+packages:
+  - backend/engine
+  - backend/api
+  - website
+  - frontend
+# Keep a single React across the monorepo. The Expo app (react-native 0.81) pins
+# react 19.1.0; without this, the website's react-dom floats to 19.2.x under the
+# hoisted linker, mismatches react, and the Vercel build fails prerendering with
+# "Cannot read properties of null (reading 'useRef')".
+overrides:
+  react: 19.1.0
+  react-dom: 19.1.0
+  # HyperFrames and onnxruntime-node still request ^0.5.x, but <0.6.0 permits a
+  # crafted ZIP to force a 4GB allocation (GHSA-xcpc-8h2w-3j85).
+  adm-zip: 0.6.1
+  # Next and Expo pin older PostCSS 8 releases; 8.5.16 keeps the same API while
+  # fixing unsafe CSS stringification (GHSA-qx2v-qp2m-jg93).
+  postcss: 8.5.23
+  # Patched transitive releases; validated by tests and Expo/Next builds.
+  esbuild: ^0.25.0
+  vite: 8.3.4
+  uuid: 11.1.1
+  sharp: 0.35.5
+  decode-uri-component: 0.5.0
+  image-size: 2.0.4
+  metro: 0.83.8
+allowBuilds:
+  '@google/genai': true
+  esbuild: true
+  onnxruntime-node: true
+  protobufjs: true
+  sharp: true
+
+patchedDependencies:
+  query-string@7.1.3: patches/query-string@7.1.3.patch

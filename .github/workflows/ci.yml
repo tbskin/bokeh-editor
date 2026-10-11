@@ -1,0 +1,69 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '22'
+      - run: npm install --global pnpm@11.1.0
+      - run: sudo apt-get update && sudo apt-get install -y ffmpeg python3 python3-pip fontconfig
+      - run: pnpm install --frozen-lockfile
+      - name: Prepare rendering tools
+        run: |
+          python3 -m pip install --user uv fonttools
+          uv sync --frozen --project backend/vendor/video-use
+          mkdir -p ~/.local/share/fonts
+          cp 'backend/vendor/fonts/Montserrat[wght].ttf' ~/.local/share/fonts/
+          fonttools varLib.instancer --update-name-table -o ~/.local/share/fonts/Montserrat-SemiBold.ttf 'backend/vendor/fonts/Montserrat[wght].ttf' wght=600
+          fc-cache -f
+          pnpm --filter @ole/engine exec hyperframes browser ensure
+      - run: pnpm -r test
+      - name: Type checks and docs
+        run: |
+          pnpm --filter @ole/engine typecheck
+          pnpm --filter @ole/api typecheck
+          pnpm --filter @ole/frontend exec tsc --noEmit
+          pnpm --filter @ole/website exec tsc --noEmit
+          pnpm check:docs
+      - run: pnpm --filter @ole/website build
+      - name: Mobile bundles (placeholder configuration)
+        env:
+          EXPO_PUBLIC_SUPABASE_URL: https://example.supabase.co
+          EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY: placeholder
+          EXPO_PUBLIC_API_URL: http://localhost:8787
+        run: pnpm --filter @ole/frontend exec expo export --platform ios --platform android --output-dir ../../mobile-build
+      - name: Dependency audit (known upstream advisories documented in SECURITY.md)
+        continue-on-error: true
+        run: pnpm audit --json > dependency-audit.json
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: always()
+        with:
+          name: dependency-audit
+          path: dependency-audit.json
+  secrets:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@ff98106e4c7b2bc287b24eaf42907196329070c7 # v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  container:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - name: Build the self-hosting image
+        run: docker build -f backend/Dockerfile -t bokeh-backend .
+      - name: Verify unprivileged media toolchain
+        run: docker run --rm --entrypoint sh bokeh-backend -c 'test "$(id -u)" = 1000 && test -w /data && ffmpeg -version && uv run --frozen --project backend/vendor/video-use python -V'

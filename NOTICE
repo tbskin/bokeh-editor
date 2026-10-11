@@ -1,0 +1,11 @@
+Bokeh Editor
+Copyright (c) 2026 TourByte Inc.
+
+Original project code is available under the root MIT License.
+Third-party code, fonts, and dependencies retain their respective licenses;
+see docs/third-party-notices.md and the notices distributed with those files.
+The MIT grant does not grant trademark rights to the Bokeh name or logo.
+Forks should use their own product identity and service accounts.
+
+This public source distribution omits the hosted product's demonstration
+media, music, and sound effects. It includes no license to those omitted assets.

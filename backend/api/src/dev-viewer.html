@@ -1,0 +1,116 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Eyes — analysis viewer</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root { --bg:#0A0A0F; --surface:#14141C; --line:#26263200; --edge:#262632; --ink:#EDEDF2; --muted:#8B8B98; --iris:#6C5CFF; }
+  * { box-sizing: border-box; margin: 0; }
+  body { background: var(--bg); color: var(--ink); font: 14px/1.5 -apple-system, "Segoe UI", sans-serif; display: flex; height: 100vh; overflow: hidden; }
+  aside { width: 250px; border-right: 1px solid var(--edge); overflow-y: auto; padding: 14px; flex-shrink: 0; }
+  main { flex: 1; overflow-y: auto; padding: 20px 24px 60px; }
+  h1 { font-size: 15px; margin-bottom: 4px; }
+  .sub { color: var(--muted); font-size: 12px; margin-bottom: 14px; }
+  .proj { padding: 9px 10px; border-radius: 9px; cursor: pointer; margin-bottom: 4px; border: 1px solid transparent; }
+  .proj:hover { background: var(--surface); }
+  .proj.on { border-color: var(--iris); background: var(--surface); }
+  .proj .t { font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .proj .d { font-size: 11px; color: var(--muted); }
+  .card { background: var(--surface); border: 1px solid var(--edge); border-radius: 12px; padding: 16px; margin-bottom: 16px; display: flex; gap: 16px; }
+  video { width: 200px; aspect-ratio: 9/16; background: #000; border-radius: 9px; flex-shrink: 0; object-fit: contain; }
+  .meta { flex: 1; min-width: 0; }
+  .file { font-weight: 600; font-size: 13px; }
+  .dur { color: var(--muted); font-size: 12px; margin-left: 6px; }
+  .lbl { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 12px 0 5px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip { background: #1D1D28; border: 1px solid var(--edge); border-radius: 99px; padding: 2px 10px; font-size: 12px; cursor: pointer; }
+  .chip:hover { border-color: var(--iris); }
+  .chip.tag { cursor: default; color: var(--muted); }
+  .seg { border: 1px solid var(--edge); border-radius: 9px; padding: 10px 12px; margin-bottom: 8px; cursor: pointer; }
+  .seg:hover { border-color: var(--iris); }
+  .seg .range { color: var(--iris); font-size: 12px; font-weight: 600; }
+  .seg .desc { margin: 3px 0 5px; }
+  .kv { font-size: 12px; color: var(--muted); }
+  .kv b { color: var(--ink); font-weight: 500; }
+  details { margin-top: 12px; }
+  summary { cursor: pointer; color: var(--muted); font-size: 12px; }
+  pre { white-space: pre-wrap; background: #101018; border: 1px solid var(--edge); border-radius: 9px; padding: 12px; font-size: 12px; margin-top: 8px; color: #C9C9D4; }
+  .banner { background: var(--surface); border: 1px solid var(--edge); border-radius: 12px; padding: 14px 16px; margin-bottom: 18px; }
+  .banner p { color: var(--muted); font-size: 13px; }
+  .banner .topic { color: var(--ink); }
+  .empty { color: var(--muted); padding: 40px; text-align: center; }
+</style>
+
+<aside>
+  <h1>Eyes</h1>
+  <div class="sub">what the agent saw, per project</div>
+  <div id="list"></div>
+</aside>
+<main id="main"><div class="empty">Pick a project</div></main>
+
+<script>
+const $ = (s, el=document) => el.querySelector(s);
+const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c]));
+const fmtT = (t) => t.toFixed(1) + "s";
+
+async function loadList() {
+  const rows = await fetch("/api/list").then((r) => r.json());
+  $("#list").innerHTML = rows.map((p) => `
+    <div class="proj" data-id="${p.id}">
+      <div class="t">${esc(p.title ?? p.context ?? p.id.slice(0, 8))}</div>
+      <div class="d">${new Date(p.analyzedAt).toLocaleString()} · ${p.id.slice(0, 8)}</div>
+    </div>`).join("") || '<div class="sub">no analyzed projects</div>';
+  for (const el of document.querySelectorAll(".proj")) el.onclick = () => { open(el.dataset.id); };
+}
+
+function segCard(s) {
+  return `
+    <div class="seg" data-a="${s.start}" data-b="${s.end}" title="click to play this segment">
+      <span class="range">${fmtT(s.start)} → ${fmtT(s.end)}</span>
+      <div class="desc">${esc(s.description)}</div>
+      ${s.implies ? `<div class="kv" style="color:#9d8fff"><b>implies</b> ${esc(s.implies)}</div>` : ""}
+      <div class="kv"><b>subjects</b> ${esc((s.subjects ?? []).join(", ") || "—")} · <b>motion</b> ${esc(s.motion || "—")}</div>
+      <div class="kv"><b>quality</b> ${esc(s.quality || "—")}</div>
+      <div class="chips" style="margin-top:6px">${(s.tags ?? []).map((t) => `<span class="chip tag">${esc(t)}</span>`).join("")}</div>
+    </div>`;
+}
+
+async function open(id) {
+  for (const el of document.querySelectorAll(".proj")) el.classList.toggle("on", el.dataset.id === id);
+  const p = await fetch("/api/project/" + id).then((r) => r.json());
+  $("#main").innerHTML = `
+    <div class="banner">
+      <h1>${esc(p.plan?.title ?? p.plan?.angle ?? id)}</h1>
+      <p class="topic">${(p.brief?.context ?? p.brief?.topic) ? "context given: “" + esc(p.brief.context ?? p.brief.topic) + "”" : "no context given (agent picked the idea)"} </p>
+      <p>${esc(p.summary ?? "")}</p>
+      ${p.script ? `<details><summary>the script the writer made from this understanding</summary><pre>${esc(p.script)}</pre></details>` : ""}
+    </div>
+    ${p.clips.map((c, i) => `
+      <div class="card" id="c${i}">
+        <video src="/clip/${id}/${encodeURIComponent(c.file.replace(/^clips\//, ""))}" controls muted playsinline preload="metadata"></video>
+        <div class="meta">
+          <span class="file">${esc(c.file)}</span><span class="dur">${fmtT(c.durationSec)}</span>
+          <div class="lbl">frames the model saw (click to view that exact moment)</div>
+          <div class="chips">${c.eyeFrames.map((t) => `<span class="chip" data-t="${t}">${fmtT(t)}</span>`).join("")}</div>
+          <div class="lbl">what it understood — ${c.segments.length} segment(s)</div>
+          ${c.segments.map(segCard).join("")}
+          <details><summary>the exact prompt this clip was analyzed with</summary><pre>${esc(c.prompt)}</pre></details>
+        </div>
+      </div>`).join("")}`;
+
+  // Wire seeking: frame chips pause ON the sampled frame; segment cards play their range.
+  for (const card of document.querySelectorAll(".card")) {
+    const v = $("video", card);
+    for (const ch of card.querySelectorAll(".chip[data-t]"))
+      ch.onclick = () => { v.currentTime = Number(ch.dataset.t); v.pause(); };
+    for (const sg of card.querySelectorAll(".seg"))
+      sg.onclick = () => {
+        const b = Number(sg.dataset.b);
+        v.currentTime = Number(sg.dataset.a);
+        v.play();
+        v.ontimeupdate = () => { if (v.currentTime >= b) { v.pause(); v.ontimeupdate = null; } };
+      };
+  }
+}
+
+loadList();
+</script>

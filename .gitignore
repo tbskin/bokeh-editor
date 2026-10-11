@@ -1,0 +1,51 @@
+# dependencies
+node_modules/
+.pnp.*
+
+# env / secrets
+.env
+.env.*
+!.env.example
+
+# builds
+dist/
+build/
+.next/
+out/
+.expo/
+.turbo/
+*.tsbuildinfo
+
+# native
+ios/Pods/
+*.ipa
+*.apk
+*.aab
+
+# media / renders (large, ephemeral — never commit)
+*.mp4
+*.mov
+*.wav
+*.m4a
+*.mp3
+*.pem
+*.key
+*.sql.gz
+*.dump
+*.db
+
+# per-project working dirs (uploaded media + generated artifacts)
+data/
+backend/*/data/
+
+# os / editor
+.DS_Store
+*.log
+.vscode/
+.idea/
+backend/vendor/video-use/.venv/
+__pycache__/
+*.egg-info/
+
+mobile-build/
+dependency-audit.json

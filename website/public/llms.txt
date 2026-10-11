@@ -1,0 +1,9 @@
+# Bokeh
+
+> AI co-pilot for short form content. Bring your clips, get a finished, post-ready captioned reel.
+
+## Pages
+
+- [Home](https://www.trybokeh.com/): what Bokeh is and the waitlist.
+- [FAQ](https://www.trybokeh.com/faq): common questions about how it works and who it is for.
+- [Blog](https://www.trybokeh.com/blog): plain-language guides on AI content editing.
